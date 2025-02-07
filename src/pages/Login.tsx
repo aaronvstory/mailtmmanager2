@@ -1,11 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAtom } from "jotai";
 import { Mail, Lock, Loader } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from '../lib/utils';
+import { mailTM } from "../lib/api";
+import {
+  authTokenAtom,
+  currentUserAtom,
+  storedAccountsAtom,
+  activeAccountAtom,
+} from "../lib/store";
 
 export function Login() {
   const navigate = useNavigate();
+  const [, setToken] = useAtom(authTokenAtom);
+  const [, setCurrentUser] = useAtom(currentUserAtom);
+  const [storedAccounts, setStoredAccounts] = useAtom(storedAccountsAtom);
+  const [, setActiveAccount] = useAtom(activeAccountAtom);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -17,11 +28,41 @@ export function Login() {
     setIsLoading(true);
 
     try {
-      // Placeholder success
+      const token = await mailTM.login(formData.email, formData.password);
+      const user = await mailTM.getAccount();
+
+      // Store the account
+      const newAccount = {
+        id: user.id,
+        email: user.address,
+        token,
+        lastActive: new Date().toISOString(),
+      };
+
+      // Update stored accounts
+      const existingAccountIndex = storedAccounts.findIndex(
+        (account) => account.id === user.id
+      );
+      if (existingAccountIndex >= 0) {
+        // Update existing account
+        const updatedAccounts = [...storedAccounts];
+        updatedAccounts[existingAccountIndex] = newAccount;
+        setStoredAccounts(updatedAccounts);
+      } else {
+        // Add new account
+        setStoredAccounts([...storedAccounts, newAccount]);
+      }
+
+      // Set active account and auth state
+      setActiveAccount(user.id);
+      setToken(token);
+      setCurrentUser(user);
+
       toast.success("Successfully logged in!");
       navigate("/");
     } catch (error: unknown) {
-      toast.error("Invalid credentials. Please try again.");
+      const message = error instanceof Error ? error.message : "Invalid credentials. Please try again.";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
@@ -31,11 +72,17 @@ export function Login() {
     <div className="min-h-screen flex items-center justify-center bg-primary py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-text-primary">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-primary">
             Sign in to your account
           </h2>
-          <p className="mt-2 text-center text-sm text-text-secondary">
-            Or create a new account
+          <p className="mt-2 text-center text-sm text-secondary">
+            Or{" "}
+            <button
+              onClick={() => navigate("/register")}
+              className="font-medium text-accent-primary hover:text-accent-secondary"
+            >
+              create a new account
+            </button>
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -46,7 +93,7 @@ export function Login() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-text-secondary" />
+                  <Mail className="h-5 w-5 text-secondary" />
                 </div>
                 <input
                   id="email"
@@ -58,7 +105,7 @@ export function Login() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-border placeholder-text-secondary text-text-primary rounded-t-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm bg-secondary"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-border placeholder-secondary text-primary rounded-t-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Email address"
                 />
               </div>
@@ -69,7 +116,7 @@ export function Login() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-text-secondary" />
+                  <Lock className="h-5 w-5 text-secondary" />
                 </div>
                 <input
                   id="password"
@@ -81,7 +128,7 @@ export function Login() {
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-border placeholder-text-secondary text-text-primary rounded-b-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm bg-secondary"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-border placeholder-secondary text-primary rounded-b-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Password"
                 />
               </div>
@@ -92,10 +139,7 @@ export function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className={cn(
-                "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-text-primary bg-accent-primary hover:bg-accent-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-primary disabled:opacity-50 disabled:cursor-not-allowed",
-                isLoading && "cursor-not-allowed opacity-50"
-              )}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-primary bg-accent-primary hover:bg-accent-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-secondary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <Loader className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
@@ -103,11 +147,6 @@ export function Login() {
                 "Sign in"
               )}
             </button>
-            <p className="mt-2 text-center text-sm text-text-secondary">
-              <a href="/register" className="font-medium text-accent-primary hover:text-accent-secondary">
-                Create a new account
-              </a>
-            </p>
           </div>
         </form>
       </div>

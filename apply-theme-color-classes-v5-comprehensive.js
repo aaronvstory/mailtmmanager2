@@ -1,10 +1,10 @@
-import fs from "fs";
+import fs from 'fs';
 
 const actions = [
   {
-    type: "file",
-    filePath: "src/components/Sidebar.tsx",
-    content: `import React from 'react';
+    "type": "file",
+    "filePath": "src/components/Sidebar.tsx",
+    "content": `import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Inbox } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -22,19 +22,19 @@ export function Sidebar() {
             location.pathname === '/' ? 'bg-gray-100 text-primary' : 'text-secondary hover:bg-hover'
           )}
         >
-          <Inbox className="w-5 h-5" /> {/* Removed redundant text-secondary */}
+          <Inbox className="w-5 h-5 text-secondary" />
           <span>Inbox</span>
         </Link>
       </div>
     </div>
   );
 }
-`,
+`
   },
   {
-    type: "file",
-    filePath: "src/pages/Inbox.tsx",
-    content: `import { useState } from "react";
+    "type": "file",
+    "filePath": "src/pages/Inbox.tsx",
+    "content": `import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Loader, Mail as MailIcon, Star, Trash2 } from "lucide-react";
@@ -75,33 +75,30 @@ export function Inbox() {
             <Loader className="w-6 h-6 animate-spin text-gray-500" />
           </div>
         ) : (
-          <div className="divide-y divide-gray-200"> {/* Added container for consistent styling */}
+          <div>
             {data?.messages.map((message) => (
-              <button
-                key={message.id}
-                className="flex items-start justify-between w-full px-4 py-3 hover:bg-gray-100 focus:outline-none" // Added styling to button
-              >
-                <div>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-3">
-                      <MailIcon className="w-5 h-5 text-secondary" />
-                      <div>
-                        <p className="font-medium text-primary">
-                          {message.from.address}
-                        </p>
-                        <p className="text-sm text-secondary">
-                          {format(new Date(message.createdAt), "MMM d, yyyy")}
-                        </p>
+              <button key={message.id}>
+                  <div>
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center space-x-3">
+                        <MailIcon className="w-5 h-5 text-secondary" />
+                        <div>
+                          <p className="font-medium text-primary">
+                            {message.from.address}
+                          </p>
+                          <p className="text-sm text-secondary">
+                            {format(new Date(message.createdAt), "MMM d, yyyy")}
+                          </p>
+                        </div>
                       </div>
                     </div>
+                    <h3 className="mt-2 text-sm font-medium text-primary">
+                      {message.subject}
+                    </h3>
+                    <p className="mt-1 text-sm text-secondary line-clamp-2">
+                      {message.intro}
+                    </p>
                   </div>
-                  <h3 className="mt-2 text-sm font-medium text-primary">
-                    {message.subject}
-                  </h3>
-                  <p className="mt-1 text-sm text-secondary line-clamp-2">
-                    {message.intro}
-                  </p>
-                </div>
               </button>
             ))}
           </div>
@@ -113,16 +110,16 @@ export function Inbox() {
     </div>
   );
 }
-`,
+`
   },
   {
-    type: "file",
-    filePath: "src/pages/Login.tsx",
-    content: `import React, { useState } from "react";
+    "type": "file",
+    "filePath": "src/pages/Login.tsx",
+    "content": `import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Loader } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from '../lib/utils'; // Added cn for classname utility
+
 
 export function Login() {
   const navigate = useNavigate();
@@ -212,10 +209,7 @@ export function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className={cn(
-                "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-primary bg-accent-primary hover:bg-accent-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-primary disabled:opacity-50 disabled:cursor-not-allowed",
-                isLoading && "cursor-not-allowed opacity-50"  // More explicit disabled styling
-              )}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-primary bg-accent-primary hover:bg-accent-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-secondary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <Loader className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
@@ -229,16 +223,15 @@ export function Login() {
     </div>
   );
 }
-`,
+`
   },
   {
-    type: "file",
-    filePath: "src/pages/Register.tsx",
-    content: `import React, { useState } from 'react';
+    "type": "file",
+    "filePath": "src/pages/Register.tsx",
+    "content": `import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Lock, Loader } from 'lucide-react'; // Changed Mail to User
+import { Mail, Lock, Loader } from 'lucide-react';
 import { toast } from 'sonner';
-import { cn } from '../lib/utils'; // Added cn for classname utility
 
 export function Register() {
   const navigate = useNavigate();
@@ -252,7 +245,7 @@ export function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
       return;
@@ -292,7 +285,7 @@ export function Register() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-secondary" /> {/* Changed to User icon */}
+                  <Mail className="h-5 w-5 text-secondary" />
                 </div>
                 <input
                   id="username"
@@ -354,10 +347,7 @@ export function Register() {
             <button
               type="submit"
               disabled={isLoading}
-              className={cn(
-                "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-primary bg-accent-primary hover:bg-accent-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-primary disabled:opacity-50 disabled:cursor-not-allowed",
-                isLoading && "cursor-not-allowed opacity-50" // More explicit disabled styling
-              )}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-primary bg-accent-primary hover:bg-accent-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <Loader className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
@@ -371,13 +361,22 @@ export function Register() {
     </div>
   );
 }
-`,
-  },
+`
+  }
 ];
 
-actions.forEach((action) => {
-  if (action.type === "file") {
+actions.forEach(action => {
+  if (action.type === 'file') {
     fs.writeFileSync(action.filePath, action.content);
-    console.log(`File written: ${action.filePath}`);
+    console.log(\`File written: \${action.filePath}\`);
   }
 });
+</boltArtifact>
+
+After this action, let's try running the script again:
+
+```sh
+node apply-theme-color-classes-v5-comprehensive.js
+```
+
+If we *still* get the `SyntaxError`, we might need to try a different approach to identify the problematic character or consider if there's an issue with the Node.js environment itself, although that's less likely. Let me know the output.

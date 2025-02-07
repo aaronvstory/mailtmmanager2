@@ -1,62 +1,111 @@
 import React from 'react';
-import { Home, Inbox, Archive, Star, Trash2, Settings } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
+import { Inbox, Star, Settings, LogOut } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { categoriesAtom, pinnedAddressesAtom, authTokenAtom, currentUserAtom } from '../lib/store';
+import { mailTM } from '../lib/api';
 
 export function Sidebar() {
-  const navItems = [
-    {
-      href: "/",
-      icon: Home,
-      label: "Home",
-    },
-    {
-      href: "/inbox",
-      icon: Inbox,
-      label: "Inbox",
-    },
-    {
-      href: "/archive",
-      icon: Archive,
-      label: "Archive",
-    },
-    {
-      href: "/starred",
-      icon: Star,
-      label: "Starred",
-    },
-    {
-      href: "/trash",
-      icon: Trash2,
-      label: "Trash",
-    },
-    {
-      href: "/settings",
-      icon: Settings,
-      label: "Settings",
-    },
-  ];
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [categories] = useAtom(categoriesAtom);
+  const [pinnedAddresses] = useAtom(pinnedAddressesAtom);
+  const [, setToken] = useAtom(authTokenAtom);
+  const [, setCurrentUser] = useAtom(currentUserAtom);
+
+  const handleLogout = () => {
+    setToken(null);
+    setCurrentUser(null);
+    mailTM.clearToken();
+    navigate('/login');
+  };
 
   return (
-    <aside className="bg-secondary w-64 border-r border-border h-full">
-      <div className="px-4 py-6">
-        <h2 className="text-2xl font-bold text-text-primary">Mail.tm</h2>
-      </div>
-      <nav className="px-2 space-y-1">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.label}
-            to={item.href}
-            className={({ isActive }) => cn(
-              "group flex items-center px-2 py-2 text-sm font-medium rounded-md hover:bg-hover hover:text-text-primary",
-              isActive ? 'bg-accent-primary text-text-primary' : 'text-text-secondary'
+    <div className="w-64 bg-secondary border-r border-border p-4">
+      <div className="space-y-1">
+        <Link
+          to="/"
+          className={cn(
+            'flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium',
+            location.pathname === '/' ? 'bg-gray-100 text-primary' : 'text-secondary hover:bg-hover'
+          )}
+        >
+          <Inbox className="w-5 h-5 text-secondary" />
+          <span>Inbox</span>
+        </Link>
+
+        {categories.length > 0 && (
+          <div className="mt-8">
+            <h3 className="px-3 text-xs font-semibold text-secondary uppercase tracking-wider">
+              Categories
+            </h3>
+            <div className="mt-2 space-y-1">
+              {categories.map((category) => (
+                <Link
+                  key={category.id}
+                  to={`/categories/${category.id}`}
+                  className={cn(
+                    'flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium',
+                    location.pathname === `/category/${category.id}`
+                      ? 'bg-gray-100 text-primary'
+                      : 'text-secondary hover:bg-hover'
+                  )}
+                >
+                  <span>{category.name}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {pinnedAddresses.length > 0 && (
+          <div className="mt-8">
+            <h3 className="px-3 text-xs font-semibold text-secondary uppercase tracking-wider">
+              Pinned Addresses
+            </h3>
+            <div className="mt-2 space-y-1">
+              {pinnedAddresses.map((address) => (
+                <Link
+                  key={address}
+                  to={`/address/${address}`}
+                  className={cn(
+                    'flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium',
+                    location.pathname === `/address/${address}`
+                      ? 'bg-gray-100 text-primary'
+                      : 'text-secondary hover:bg-hover'
+                  )}
+                >
+                  <Star className="w-4 h-4 text-secondary" />
+                  <span>{address}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="mt-auto pt-8">
+          <Link
+            to="/settings"
+            className={cn(
+              'flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium',
+              location.pathname === '/settings'
+                ? 'bg-gray-100 text-primary'
+                : 'text-secondary hover:bg-hover'
             )}
           >
-            <item.icon className="mr-2 h-4 w-4" />
-            {item.label}
-          </NavLink>
-        ))}
-      </nav>
-    </aside>
+            <Settings className="w-5 h-5 text-secondary" />
+            <span>Settings</span>
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-secondary hover:bg-gray-50"
+          >
+            <LogOut className="w-5 h-5" />
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
