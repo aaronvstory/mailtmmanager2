@@ -142,7 +142,7 @@ export function EmailFilters() {
           <button
             onClick={saveFilter}
             disabled={!newFilter.name || !newFilter.conditions?.length}
-            className="flex items-center gap-2 px-3 py-2 bg-accent-primary hover:bg-accent-secondary text-white rounded disabled:opacity-50"
+            className="flex items-center gap-2 px-3 py-2 bg-accent-primary hover:bg-accent-secondary text-primary rounded disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
             Save Filter
