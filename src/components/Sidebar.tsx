@@ -1,25 +1,62 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Inbox } from 'lucide-react';
+import { Home, Inbox, Archive, Star, Trash2, Settings } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
 import { cn } from '../lib/utils';
 
 export function Sidebar() {
-  const location = useLocation();
+  const navItems = [
+    {
+      href: "/",
+      icon: Home,
+      label: "Home",
+    },
+    {
+      href: "/inbox",
+      icon: Inbox,
+      label: "Inbox",
+    },
+    {
+      href: "/archive",
+      icon: Archive,
+      label: "Archive",
+    },
+    {
+      href: "/starred",
+      icon: Star,
+      label: "Starred",
+    },
+    {
+      href: "/trash",
+      icon: Trash2,
+      label: "Trash",
+    },
+    {
+      href: "/settings",
+      icon: Settings,
+      label: "Settings",
+    },
+  ];
 
   return (
-    <div className="w-64 bg-secondary border-r border-border p-4">
-      <div className="space-y-1">
-        <Link
-          to="/"
-          className={cn(
-            'flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium',
-            location.pathname === '/' ? 'bg-gray-100 text-primary' : 'text-secondary hover:bg-hover'
-          )}
-        >
-          <Inbox className="w-5 h-5" /> {/* Removed redundant text-secondary */}
-          <span>Inbox</span>
-        </Link>
+    <aside className="bg-secondary w-64 border-r border-border h-full">
+      <div className="px-4 py-6">
+        <h2 className="text-2xl font-bold text-text-primary">Mail.tm</h2>
       </div>
-    </div>
+      <nav className="px-2 space-y-1">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.label}
+            to={item.href}
+            className={({ isActive }) => cn(
+              "group flex items-center px-2 py-2 text-sm font-medium rounded-md hover:bg-hover hover:text-text-primary",
+              isActive ? 'bg-accent-primary text-text-primary' : 'text-text-secondary'
+            )}
+          >
+            <item.icon className="mr-2 h-4 w-4" />
+            {item.label}
+          </NavLink>
+        ))}
+      </nav>
+    </aside>
   );
 }

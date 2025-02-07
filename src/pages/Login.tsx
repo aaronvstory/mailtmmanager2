@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Loader } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from '../lib/utils'; // Added cn for classname utility
+import { cn } from '../lib/utils';
 
 export function Login() {
   const navigate = useNavigate();
@@ -31,10 +31,10 @@ export function Login() {
     <div className="min-h-screen flex items-center justify-center bg-primary py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-primary">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-text-primary">
             Sign in to your account
           </h2>
-          <p className="mt-2 text-center text-sm text-secondary">
+          <p className="mt-2 text-center text-sm text-text-secondary">
             Or create a new account
           </p>
         </div>
@@ -46,7 +46,7 @@ export function Login() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-secondary" />
+                  <Mail className="h-5 w-5 text-text-secondary" />
                 </div>
                 <input
                   id="email"
@@ -58,7 +58,7 @@ export function Login() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-border placeholder-secondary text-primary rounded-t-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-border placeholder-text-secondary text-text-primary rounded-t-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm bg-secondary"
                   placeholder="Email address"
                 />
               </div>
@@ -69,7 +69,7 @@ export function Login() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-secondary" />
+                  <Lock className="h-5 w-5 text-text-secondary" />
                 </div>
                 <input
                   id="password"
@@ -81,7 +81,7 @@ export function Login() {
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-border placeholder-secondary text-primary rounded-b-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-border placeholder-text-secondary text-text-primary rounded-b-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm bg-secondary"
                   placeholder="Password"
                 />
               </div>
@@ -93,8 +93,8 @@ export function Login() {
               type="submit"
               disabled={isLoading}
               className={cn(
-                "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-primary bg-accent-primary hover:bg-accent-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-primary disabled:opacity-50 disabled:cursor-not-allowed",
-                isLoading && "cursor-not-allowed opacity-50"  // More explicit disabled styling
+                "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-text-primary bg-accent-primary hover:bg-accent-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-primary disabled:opacity-50 disabled:cursor-not-allowed",
+                isLoading && "cursor-not-allowed opacity-50"
               )}
             >
               {isLoading ? (
@@ -103,6 +103,11 @@ export function Login() {
                 "Sign in"
               )}
             </button>
+            <p className="mt-2 text-center text-sm text-text-secondary">
+              <a href="/register" className="font-medium text-accent-primary hover:text-accent-secondary">
+                Create a new account
+              </a>
+            </p>
           </div>
         </form>
       </div>

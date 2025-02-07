@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Lock, Loader } from 'lucide-react'; // Changed Mail to User
+import { User, Lock, Loader } from 'lucide-react';
 import { toast } from 'sonner';
-import { cn } from '../lib/utils'; // Added cn for classname utility
+import { cn } from '../lib/utils';
 
 export function Register() {
   const navigate = useNavigate();
@@ -41,10 +41,10 @@ export function Register() {
     <div className="min-h-screen flex items-center justify-center bg-primary py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-primary">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-text-primary">
             Create a new account
           </h2>
-          <p className="mt-2 text-center text-sm text-secondary">
+          <p className="mt-2 text-center text-sm text-text-secondary">
             Or sign in to your account
           </p>
         </div>
@@ -56,7 +56,7 @@ export function Register() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-secondary" /> {/* Changed to User icon */}
+                  <User className="h-5 w-5 text-text-secondary" />
                 </div>
                 <input
                   id="username"
@@ -65,7 +65,7 @@ export function Register() {
                   required
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="appearance-none rounded-t-md relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-secondary text-primary focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-t-md relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-text-secondary text-text-primary focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Username"
                 />
               </div>
@@ -76,7 +76,7 @@ export function Register() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-secondary" />
+                  <Lock className="h-5 w-5 text-text-secondary" />
                 </div>
                 <input
                   id="password"
@@ -86,7 +86,7 @@ export function Register() {
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="appearance-none relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-secondary text-primary focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
+                  className="appearance-none relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-text-secondary text-text-primary focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Password"
                 />
               </div>
@@ -97,7 +97,7 @@ export function Register() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-secondary" />
+                  <Lock className="h-5 w-5 text-text-secondary" />
                 </div>
                 <input
                   id="confirmPassword"
@@ -107,7 +107,7 @@ export function Register() {
                   required
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  className="appearance-none rounded-b-md relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-secondary text-primary focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-b-md relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-text-secondary text-text-primary focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Confirm Password"
                 />
               </div>
@@ -119,8 +119,8 @@ export function Register() {
               type="submit"
               disabled={isLoading}
               className={cn(
-                "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-primary bg-accent-primary hover:bg-accent-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-primary disabled:opacity-50 disabled:cursor-not-allowed",
-                isLoading && "cursor-not-allowed opacity-50" // More explicit disabled styling
+                "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-text-primary bg-accent-primary hover:bg-accent-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-primary disabled:opacity-50 disabled:cursor-not-allowed",
+                isLoading && "cursor-not-allowed opacity-50"
               )}
             >
               {isLoading ? (
@@ -129,6 +129,11 @@ export function Register() {
                 'Create Account'
               )}
             </button>
+            <p className="mt-2 text-center text-sm text-text-secondary">
+              <a href="/login" className="font-medium text-accent-primary hover:text-accent-secondary">
+                Sign in to your account
+              </a>
+            </p>
           </div>
         </form>
       </div>
