@@ -13,21 +13,26 @@ import { useTheme } from './lib/theme';
 const queryClient = new QueryClient();
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const isDevelopment = import.meta.env.DEV;
   const [token] = useAtom(authTokenAtom);
   const [activeAccountId] = useAtom(activeAccountAtom);
   const [storedAccounts] = useAtom(storedAccountsAtom);
+  const navigate = useNavigate();
 
   const activeAccount = storedAccounts.find(account => account.id === activeAccountId);
 
   React.useEffect(() => {
     if (activeAccount) {
       mailTM.setToken(activeAccount.token);
+    } else if (!token) {
+      navigate('/login');
     }
-  }, [activeAccount]);
+  }, [activeAccount, token, navigate]);
 
-  // Allow access in development mode without token
-  return (isDevelopment || token) ? <>{children}</> : <Navigate to="/login" />;
+  if (!token && !activeAccount) {
+    return <Navigate to="/login" />;
+  }
+
+  return <>{children}</>;
 }
 
 function App() {
