@@ -4,14 +4,14 @@ import { themeAtom } from './store';
 
 const themes = {
   dark: {
-    '--bg-primary': '#121212',
-    '--bg-secondary': '#1e1e1e',
+    '--bg-primary': '#000000',
+    '--bg-secondary': '#1a0000',
     '--text-primary': '#ffffff',
     '--text-secondary': '#e0e0e0',
-    '--accent-primary': '#4ade80',
-    '--accent-secondary': '#22c55e',
-    '--border-color': '#2e2e2e',
-    '--hover-bg': '#2e2e2e',
+    '--accent-primary': '#dc143c',
+    '--accent-secondary': '#b01030',
+    '--border-color': '#2a0000',
+    '--hover-bg': '#2a0000',
   },
   light: {
     '--bg-primary': '#ffffff',
