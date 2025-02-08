@@ -13,6 +13,7 @@ import { useTheme } from './lib/theme';
 const queryClient = new QueryClient();
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
+  const isDevelopment = import.meta.env.DEV;
   const [token] = useAtom(authTokenAtom);
   const [activeAccountId] = useAtom(activeAccountAtom);
   const [storedAccounts] = useAtom(storedAccountsAtom);
@@ -25,7 +26,8 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     }
   }, [activeAccount]);
 
-  return token ? <>{children}</> : <Navigate to="/login" />;
+  // Allow access in development mode without token
+  return (isDevelopment || token) ? <>{children}</> : <Navigate to="/login" />;
 }
 
 function App() {
