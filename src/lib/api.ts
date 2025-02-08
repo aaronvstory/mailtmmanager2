@@ -66,7 +66,10 @@ class MailTMClient {
 
   // TODO: Revisit and improve error handling. Simplified for now to bypass type errors.
   private handleError(error: unknown): never {
-    console.error('API Error:', error); // Log the entire error object for now.
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      this.clearToken();
+    }
+    console.error('API Error:', error);
     throw error;
   }
 

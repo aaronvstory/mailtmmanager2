@@ -42,6 +42,13 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 
 function App() {
   useTheme();
+  const [token] = useAtom(authTokenAtom);
+  
+  React.useEffect(() => {
+    if (token) {
+      mailTM.setToken(token);
+    }
+  }, [token]);
 
   return (
     <QueryClientProvider client={queryClient}>
