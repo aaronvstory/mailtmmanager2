@@ -13,10 +13,10 @@ import { useTheme } from './lib/theme';
 const queryClient = new QueryClient();
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
+  const navigate = useNavigate();
   const [token] = useAtom(authTokenAtom);
   const [activeAccountId] = useAtom(activeAccountAtom);
   const [storedAccounts] = useAtom(storedAccountsAtom);
-  const navigate = useNavigate();
 
   const activeAccount = storedAccounts.find(account => account.id === activeAccountId);
 

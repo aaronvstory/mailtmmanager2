@@ -13,7 +13,7 @@ export function Layout() {
         <div className="flex-1 flex flex-col">
           <header className="bg-secondary border-b border-border px-4 py-2">
             <div className="flex items-center justify-between">
-              <h1 className="text-xl font-semibold text-primary">Email Management</h1>
+              <h1 className="text-xl font-semibold text-[var(--text-primary)]">Email Management</h1>
               <div className="flex items-center gap-4">
                 <ThemeToggle />
                 <AccountSwitcher />
