@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -11,19 +12,6 @@ import { mailTM } from './lib/api';
 import { useTheme } from './lib/theme';
 
 const queryClient = new QueryClient();
-
-function App() {
-  // Initialize theme at the root level
-  useTheme();
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </QueryClientProvider>
-  );
-}
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
@@ -67,6 +55,16 @@ function AppRoutes() {
   );
 }
 
-export default App;
+function App() {
+  useTheme();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </QueryClientProvider>
+  );
+}
 
 export default App;
