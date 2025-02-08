@@ -12,6 +12,19 @@ import { useTheme } from './lib/theme';
 
 const queryClient = new QueryClient();
 
+function App() {
+  // Initialize theme at the root level
+  useTheme();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </QueryClientProvider>
+  );
+}
+
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const [token] = useAtom(authTokenAtom);
@@ -35,30 +48,25 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-function App() {
-  // Initialize theme at the root level
-  useTheme();
-
+function AppRoutes() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/"
-            element={
-              <PrivateRoute>
-                <Layout />
-              </PrivateRoute>
-            }
-          >
-            <Route index element={<Inbox />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route
+        path="/"
+        element={
+          <PrivateRoute>
+            <Layout />
+          </PrivateRoute>
+        }
+      >
+        <Route index element={<Inbox />} />
+      </Route>
+    </Routes>
   );
 }
+
+export default App;
 
 export default App;
