@@ -97,7 +97,7 @@ export function Register() {
                   required
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="appearance-none rounded-t-md relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-secondary text-primary focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-t-md relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-[var(--text-secondary)] text-[var(--text-primary)] focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Username"
                 />
                 {domains?.length > 0 && (
