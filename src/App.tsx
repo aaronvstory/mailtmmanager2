@@ -13,7 +13,7 @@ import { useTheme } from './lib/theme';
 
 const queryClient = new QueryClient();
 
-function PrivateRoute({ children }: { children: React.ReactNode }) {
+const PrivateRouteWrapper = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const [token] = useAtom(authTokenAtom);
   const [activeAccountId] = useAtom(activeAccountAtom);
@@ -34,26 +34,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   }
 
   return <>{children}</>;
-}
-
-function AppRoutes() {
-  return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route
-        path="/"
-        element={
-          <PrivateRoute>
-            <Layout />
-          </PrivateRoute>
-        }
-      >
-        <Route index element={<Inbox />} />
-      </Route>
-    </Routes>
-  );
-}
+};
 
 function App() {
   useTheme();
@@ -61,7 +42,20 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <AppRoutes />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/"
+            element={
+              <PrivateRouteWrapper>
+                <Layout />
+              </PrivateRouteWrapper>
+            }
+          >
+            <Route index element={<Inbox />} />
+          </Route>
+        </Routes>
       </BrowserRouter>
     </QueryClientProvider>
   );
