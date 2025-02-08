@@ -3,12 +3,36 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: dark light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 @layer base {
+  html {
+    @apply antialiased;
+  }
+  
   body {
-    @apply bg-[var(--bg-primary)] text-[var(--text-primary)];
+    @apply bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans leading-relaxed;
+  }
+
+  h1 {
+    @apply text-3xl font-bold tracking-tight;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+
+  h3 {
+    @apply text-xl font-medium;
+  }
+
+  p {
+    @apply text-base leading-relaxed;
   }
 }
 
