@@ -11,7 +11,14 @@ import { authTokenAtom, activeAccountAtom, storedAccountsAtom } from './lib/stor
 import { mailTM } from './lib/api';
 import { useTheme } from './lib/theme';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const [token] = useAtom(authTokenAtom);
@@ -49,6 +56,7 @@ function App() {
           }>
             <Route index element={<Inbox />} />
           </Route>
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
