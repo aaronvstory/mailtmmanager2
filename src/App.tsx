@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { Layout } from './components/Layout';
@@ -13,8 +13,7 @@ import { useTheme } from './lib/theme';
 
 const queryClient = new QueryClient();
 
-const PrivateRouteWrapper = ({ children }: { children: React.ReactNode }) => {
-  const navigate = useNavigate();
+function PrivateRoute({ children }: { children: React.ReactNode }) {
   const [token] = useAtom(authTokenAtom);
   const [activeAccountId] = useAtom(activeAccountAtom);
   const [storedAccounts] = useAtom(storedAccountsAtom);
@@ -24,17 +23,15 @@ const PrivateRouteWrapper = ({ children }: { children: React.ReactNode }) => {
   React.useEffect(() => {
     if (activeAccount) {
       mailTM.setToken(activeAccount.token);
-    } else if (!token) {
-      navigate('/login');
     }
-  }, [activeAccount, token, navigate]);
+  }, [activeAccount]);
 
   if (!token && !activeAccount) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;
-};
+}
 
 function App() {
   useTheme();
@@ -45,14 +42,11 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route
-            path="/"
-            element={
-              <PrivateRouteWrapper>
-                <Layout />
-              </PrivateRouteWrapper>
-            }
-          >
+          <Route path="/" element={
+            <PrivateRoute>
+              <Layout />
+            </PrivateRoute>
+          }>
             <Route index element={<Inbox />} />
           </Route>
         </Routes>
