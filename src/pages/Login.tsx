@@ -43,6 +43,27 @@ export function Login() {
       const existingAccountIndex = storedAccounts.findIndex(
         (account) => account.id === user.id
       );
+
+      if (existingAccountIndex >= 0) {
+        const updatedAccounts = [...storedAccounts];
+        updatedAccounts[existingAccountIndex] = newAccount;
+        setStoredAccounts(updatedAccounts);
+      } else {
+        setStoredAccounts([...storedAccounts, newAccount]);
+      }
+
+      // Set current session
+      setToken(token);
+      setCurrentUser(user);
+      setActiveAccount(user.id);
+
+      toast.success("Successfully logged in!");
+      navigate("/");
+
+      // Update stored accounts
+      const existingAccountIndex = storedAccounts.findIndex(
+        (account) => account.id === user.id
+      );
       if (existingAccountIndex >= 0) {
         // Update existing account
         const updatedAccounts = [...storedAccounts];
