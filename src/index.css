@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 :root {
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
   color-scheme: dark light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -14,59 +17,54 @@
   html {
     @apply antialiased;
   }
-  
-  body {
-    @apply bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans leading-relaxed;
-  }
-
   h1 {
     @apply text-3xl font-bold tracking-tight;
   }
-
   h2 {
     @apply text-2xl font-semibold tracking-tight;
   }
-
   h3 {
     @apply text-xl font-medium;
   }
-
   p {
     @apply text-base leading-relaxed;
   }
 }
 
-@layer components {
+@layer utilities {
   .bg-primary {
     background-color: var(--bg-primary);
   }
-  
+
   .bg-secondary {
     background-color: var(--bg-secondary);
   }
-  
+
   .text-primary {
     color: var(--text-primary);
   }
-  
+
   .text-secondary {
     color: var(--text-secondary);
   }
-  
+
   .border-border {
     border-color: var(--border-color);
   }
-  
+
   .bg-hover {
     background-color: var(--hover-bg);
   }
-  
+
   .bg-accent-primary {
     background-color: var(--accent-primary);
   }
-  
+
   .bg-accent-secondary {
     background-color: var(--accent-secondary);
+  }
+  body {
+    @apply bg-primary text-primary;
   }
 }
 
