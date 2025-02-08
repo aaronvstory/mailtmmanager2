@@ -38,35 +38,35 @@
 
 @layer components {
   .bg-primary {
-    @apply bg-[var(--bg-primary)];
+    background-color: var(--bg-primary);
   }
   
   .bg-secondary {
-    @apply bg-[var(--bg-secondary)];
+    background-color: var(--bg-secondary);
   }
   
   .text-primary {
-    @apply text-[var(--text-primary)];
+    color: var(--text-primary);
   }
   
   .text-secondary {
-    @apply text-[var(--text-secondary)];
+    color: var(--text-secondary);
   }
   
   .border-border {
-    @apply border-[var(--border-color)];
+    border-color: var(--border-color);
   }
   
   .bg-hover {
-    @apply bg-[var(--hover-bg)];
+    background-color: var(--hover-bg);
   }
   
   .bg-accent-primary {
-    @apply bg-[var(--accent-primary)];
+    background-color: var(--accent-primary);
   }
   
   .bg-accent-secondary {
-    @apply bg-[var(--accent-secondary)];
+    background-color: var(--accent-secondary);
   }
 }
 
