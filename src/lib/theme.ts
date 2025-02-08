@@ -4,24 +4,24 @@ import { themeAtom } from './store';
 
 const themes = {
   dark: {
-    '--bg-primary': '#09090b',
-    '--bg-secondary': '#18181b',
-    '--text-primary': '#fafafa',
-    '--text-secondary': '#a1a1aa',
-    '--accent-primary': '#22c55e',
-    '--accent-secondary': '#16a34a',
-    '--border-color': '#27272a',
-    '--hover-bg': '#27272a',
+    '--bg-primary': '#121212',
+    '--bg-secondary': '#1e1e1e',
+    '--text-primary': '#ffffff',
+    '--text-secondary': '#a0a0a0',
+    '--accent-primary': '#4ade80',
+    '--accent-secondary': '#22c55e',
+    '--border-color': '#2e2e2e',
+    '--hover-bg': '#2e2e2e',
   },
   light: {
     '--bg-primary': '#ffffff',
-    '--bg-secondary': '#fafafa',
-    '--text-primary': '#18181b',
-    '--text-secondary': '#71717a',
+    '--bg-secondary': '#f8f8f8',
+    '--text-primary': '#000000',
+    '--text-secondary': '#666666',
     '--accent-primary': '#22c55e',
     '--accent-secondary': '#16a34a',
-    '--border-color': '#e4e4e7',
-    '--hover-bg': '#f4f4f5',
+    '--border-color': '#e2e2e2',
+    '--hover-bg': '#f0f0f0',
   },
 } as const;
 
