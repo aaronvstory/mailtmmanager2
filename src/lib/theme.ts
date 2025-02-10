@@ -28,7 +28,7 @@ const themes = {
 export function useTheme() {
   const [theme, setTheme] = useAtom(themeAtom);
 
-  useEffect(() => {
+  const applyTheme = (theme: 'dark' | 'light') => {
     const root = document.documentElement;
     const themeColors = themes[theme];
 
@@ -46,7 +46,11 @@ export function useTheme() {
 
     // Update color-scheme meta
     root.style.setProperty('color-scheme', theme);
-  }, [theme]);
+  };
 
-  return { theme, setTheme, themes };
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme, applyTheme]);
+
+  return { theme, setTheme, applyTheme, themes };
 }

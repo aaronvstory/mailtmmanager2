@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
-import { useAtom } from 'jotai';
-import { Plus, Save, Trash2 } from 'lucide-react';
-import { emailFiltersAtom } from '../lib/store';
-import type { EmailFilter } from '../lib/store';
+import { useState } from "react";
+import { useAtom } from "jotai";
+import { Plus, Save, Trash2 } from "lucide-react";
+import { emailFiltersAtom } from "../lib/store";
+import type { EmailFilter } from "../lib/store";
+
+interface FilterCondition {
+  field: string;
+  operator: string;
+  value: string;
+}
 
 export function EmailFilters() {
   const [filters, setFilters] = useAtom(emailFiltersAtom);
@@ -12,11 +18,11 @@ export function EmailFilters() {
   });
 
   const addCondition = () => {
-    setNewFilter(prev => ({
+    setNewFilter((prev) => ({
       ...prev,
       conditions: [
-        ...(prev.conditions || []),
-        { field: 'subject', operator: 'contains', value: '' },
+        ...(prev.conditions ?? []),
+        { field: "subject", operator: "contains", value: "" },
       ],
     }));
   };
@@ -24,13 +30,13 @@ export function EmailFilters() {
   const saveFilter = () => {
     if (!newFilter.name || !newFilter.conditions?.length) return;
 
-    setFilters(prev => [
+    setFilters((prev) => [
       ...prev,
       {
         ...newFilter,
         id: crypto.randomUUID(),
         conditions: newFilter.conditions!,
-        action: newFilter.action || 'mark-read',
+        action: newFilter.action ?? "mark-read",
       } as EmailFilter,
     ]);
 
@@ -38,7 +44,17 @@ export function EmailFilters() {
   };
 
   const deleteFilter = (id: string) => {
-    setFilters(prev => prev.filter(f => f.id !== id));
+    setFilters((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const handleConditionChange = (
+    index: number,
+    field: keyof FilterCondition,
+    value: string
+  ) => {
+    const newConditions = [...newFilter.conditions!];
+    newConditions[index] = { ...newConditions[index], [field]: value };
+    setNewFilter((prev) => ({ ...prev, conditions: newConditions }));
   };
 
   return (
@@ -47,8 +63,11 @@ export function EmailFilters() {
 
       {/* Existing Filters */}
       <div className="space-y-4 mb-6">
-        {filters.map(filter => (
-          <div key={filter.id} className="p-3 bg-primary rounded border border-border">
+        {filters.map((filter) => (
+          <div
+            key={filter.id}
+            className="p-3 bg-primary rounded border border-border"
+          >
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-medium">{filter.name}</h3>
               <button
@@ -60,7 +79,10 @@ export function EmailFilters() {
             </div>
             <div className="space-y-2">
               {filter.conditions.map((condition, i) => (
-                <div key={i} className="text-sm text-secondary">
+                <div
+                  key={`${filter.id}-condition-${i}`}
+                  className="text-sm text-secondary"
+                >
                   {condition.field} {condition.operator} "{condition.value}"
                 </div>
               ))}
@@ -74,8 +96,10 @@ export function EmailFilters() {
         <input
           type="text"
           placeholder="Filter name"
-          value={newFilter.name || ''}
-          onChange={e => setNewFilter(prev => ({ ...prev, name: e.target.value }))}
+          value={newFilter.name || ""}
+          onChange={(e) =>
+            setNewFilter((prev) => ({ ...prev, name: e.target.value }))
+          }
           className="w-full p-2 bg-primary border border-border rounded"
         />
 
@@ -83,11 +107,9 @@ export function EmailFilters() {
           <div key={index} className="flex gap-2">
             <select
               value={condition.field}
-              onChange={e => {
-                const newConditions = [...newFilter.conditions!];
-                newConditions[index] = { ...condition, field: e.target.value as any };
-                setNewFilter(prev => ({ ...prev, conditions: newConditions }));
-              }}
+              onChange={(e) =>
+                handleConditionChange(index, "field", e.target.value)
+              }
               className="p-2 bg-primary border border-border rounded"
             >
               <option value="sender">Sender</option>
@@ -98,18 +120,16 @@ export function EmailFilters() {
 
             <select
               value={condition.operator}
-              onChange={e => {
-                const newConditions = [...newFilter.conditions!];
-                newConditions[index] = { ...condition, operator: e.target.value as any };
-                setNewFilter(prev => ({ ...prev, conditions: newConditions }));
-              }}
+              onChange={(e) =>
+                handleConditionChange(index, "operator", e.target.value)
+              }
               className="p-2 bg-primary border border-border rounded"
             >
               <option value="contains">Contains</option>
               <option value="equals">Equals</option>
               <option value="startsWith">Starts with</option>
               <option value="endsWith">Ends with</option>
-              {condition.field === 'date' && (
+              {condition.field === "date" && (
                 <>
                   <option value="before">Before</option>
                   <option value="after">After</option>
@@ -118,13 +138,11 @@ export function EmailFilters() {
             </select>
 
             <input
-              type={condition.field === 'date' ? 'date' : 'text'}
+              type={condition.field === "date" ? "date" : "text"}
               value={condition.value}
-              onChange={e => {
-                const newConditions = [...newFilter.conditions!];
-                newConditions[index] = { ...condition, value: e.target.value };
-                setNewFilter(prev => ({ ...prev, conditions: newConditions }));
-              }}
+              onChange={(e) =>
+                handleConditionChange(index, "value", e.target.value)
+              }
               className="flex-1 p-2 bg-primary border border-border rounded"
             />
           </div>

@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAtom } from 'jotai';
-import { useQuery } from '@tanstack/react-query';
-import { Mail, Lock, Loader } from 'lucide-react';
-import { toast } from 'sonner';
-import { mailTM } from '../lib/api';
-import { authTokenAtom, currentUserAtom } from '../lib/store';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAtom } from "jotai";
+import { useQuery } from "@tanstack/react-query";
+import { Mail, Lock, Loader } from "lucide-react";
+import { toast } from "sonner";
+import { mailTM } from "../lib/api";
+import { authTokenAtom, currentUserAtom } from "../lib/store";
+
+interface ApiError {
+  response?: {
+    data?: {
+      "hydra:description"?: string;
+    };
+  };
+}
 
 export function Register() {
   const navigate = useNavigate();
@@ -13,14 +21,14 @@ export function Register() {
   const [, setCurrentUser] = useAtom(currentUserAtom);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    confirmPassword: '',
+    username: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const { data: domains, isLoading: isLoadingDomains } = useQuery({
-    queryKey: ['domains'],
-    queryFn: () => mailTM.getDomains(),
+    queryKey: ["domains"],
+    queryFn: mailTM.getDomains,
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
@@ -28,20 +36,19 @@ export function Register() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error("Passwords do not match");
       return;
     }
 
-    if (!domains?.length) {
-      toast.error('No available domains');
+    if (!domains?.data?.length) {
+      toast.error("No available domains");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      // Automatically use the first available domain
-      const domain = domains[0].domain;
+      const domain = domains.data[0].domain;
       const email = `${formData.username}@${domain}`;
 
       await mailTM.createAccount(email, formData.password);
@@ -49,18 +56,18 @@ export function Register() {
       setToken(token);
       const user = await mailTM.getAccount();
       setCurrentUser(user);
-      toast.success('Account created successfully!');
-      navigate('/');
-    } catch (error: unknown) { // eslint-disable-line @typescript-eslint/no-explicit-any
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let message = 'Failed to create account';
-          if ((error as any).response?.data?.['hydra:description']) {
-            message = (error as any).response?.data['hydra:description'] ?? message;
-          }
-          toast.error(message);
-        } finally {
-          setIsLoading(false);
-        }
+      toast.success("Account created successfully!");
+      navigate("/");
+    } catch (error) {
+      let message = "Failed to create account";
+      const apiError = error as ApiError;
+      if (apiError.response?.data?.["hydra:description"]) {
+        message = apiError.response.data["hydra:description"];
+      }
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -71,9 +78,9 @@ export function Register() {
             Create a new account
           </h2>
           <p className="mt-2 text-center text-sm text-secondary">
-            Or{' '}
+            Or{" "}
             <button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate("/login")}
               className="font-medium text-accent-primary hover:text-accent-secondary"
             >
               sign in to your account
@@ -96,13 +103,15 @@ export function Register() {
                   type="text"
                   required
                   value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, username: e.target.value })
+                  }
                   className="appearance-none rounded-t-md relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-[var(--placeholder-color)] text-[var(--text-primary)] focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Username"
                 />
-                {domains?.length > 0 && (
+                {domains?.data?.[0]?.domain && (
                   <span className="absolute inset-y-0 right-0 pr-3 flex items-center text-secondary">
-                    @{domains[0].domain}
+                    @{domains.data[0].domain}
                   </span>
                 )}
               </div>
@@ -122,7 +131,9 @@ export function Register() {
                   autoComplete="new-password"
                   required
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
                   className="appearance-none relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-[var(--placeholder-color)] text-primary focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Password"
                 />
@@ -143,7 +154,12 @@ export function Register() {
                   autoComplete="new-password"
                   required
                   value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      confirmPassword: e.target.value,
+                    })
+                  }
                   className="appearance-none rounded-b-md relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-[var(--placeholder-color)] text-primary focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Confirm Password"
                 />
@@ -160,7 +176,7 @@ export function Register() {
               {isLoading ? (
                 <Loader className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
               ) : (
-                'Create Account'
+                "Create Account"
               )}
             </button>
           </div>

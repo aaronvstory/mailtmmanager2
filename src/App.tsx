@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useAtom } from "jotai";
@@ -10,6 +10,7 @@ import {
   authTokenAtom,
   activeAccountAtom,
   storedAccountsAtom,
+  themeAtom,
 } from "./lib/store";
 import { mailTM } from "./lib/api";
 import { useTheme } from "./lib/theme";
@@ -23,7 +24,7 @@ const queryClient = new QueryClient({
   },
 });
 
-function PrivateRoute({ children }: { children: React.ReactNode }) {
+function PrivateRoute({ children }: { readonly children: React.ReactNode }) {
   const [token] = useAtom(authTokenAtom);
   const [activeAccountId] = useAtom(activeAccountAtom);
   const [storedAccounts] = useAtom(storedAccountsAtom);
@@ -32,7 +33,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     (account) => account.id === activeAccountId
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (activeAccount) {
       mailTM.setToken(activeAccount.token);
     }
@@ -46,10 +47,16 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
-  useTheme();
+  const [theme] = useAtom(themeAtom);
+  const { applyTheme } = useTheme();
+
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme, applyTheme]);
+
   const [token] = useAtom(authTokenAtom);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (token) {
       mailTM.setToken(token);
     }
