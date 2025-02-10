@@ -3,10 +3,18 @@ import { StoredMessage } from './store';
 const STORAGE_PREFIX = 'mail_storage_';
 const CHUNK_SIZE = 1024 * 1024; // 1MB chunks
 
+/**
+ * EmailStorage class for managing email storage in local storage.
+ */
 export class EmailStorage {
   private static METADATA_KEY = `${STORAGE_PREFIX}metadata`;
   private static MAX_STORAGE = 50 * 1024 * 1024; // 50MB limit
 
+  /**
+   * Saves data to local storage in chunks.
+   * @param data The data to save.
+   * @returns An array of chunk IDs.
+   */
   private static async saveChunks(data: string): Promise<string[]> {
     const chunks: string[] = [];
     let offset = 0;
@@ -23,12 +31,21 @@ export class EmailStorage {
     return chunks;
   }
 
+  /**
+   * Loads data from local storage from chunks.
+   * @param chunkIds An array of chunk IDs.
+   * @returns The loaded data.
+   */
   private static async loadChunks(chunkIds: string[]): Promise<string> {
     return chunkIds
       .map(id => localStorage.getItem(id) || '')
       .join('');
   }
 
+  /**
+   * Saves a message to local storage.
+   * @param message The message to save.
+   */
   static async saveToLocal(message: StoredMessage): Promise<void> {
     const metadata = this.getMetadata();
     const messageData = JSON.stringify(message);
@@ -47,6 +64,11 @@ export class EmailStorage {
     localStorage.setItem(this.METADATA_KEY, JSON.stringify(metadata));
   }
 
+  /**
+   * Gets a stored message from local storage.
+   * @param id The ID of the message.
+   * @returns The stored message, or null if not found.
+   */
   static async getStoredMessage(id: string): Promise<StoredMessage | null> {
     const metadata = this.getMetadata();
     const messageMetadata = metadata.messages.find(m => m.id === id);
@@ -57,6 +79,10 @@ export class EmailStorage {
     return JSON.parse(messageData);
   }
 
+  /**
+   * Gets all stored messages from local storage.
+   * @returns An array of stored messages.
+   */
   static async getAllStoredMessages(): Promise<StoredMessage[]> {
     const metadata = this.getMetadata();
     const messages: StoredMessage[] = [];
@@ -69,6 +95,11 @@ export class EmailStorage {
     return messages;
   }
 
+  /**
+   * Exports a message to EML format.
+   * @param message The message to export.
+   * @returns The EML content.
+   */
   static async exportToEML(message: StoredMessage): Promise<string> {
     const headers = [
       `From: ${message.from.address}`,
@@ -84,6 +115,11 @@ export class EmailStorage {
     return headers.join('\r\n');
   }
 
+  /**
+   * Exports messages to MBOX format.
+   * @param messages The messages to export.
+   * @returns The MBOX content.
+   */
   static async exportToMBOX(messages: StoredMessage[]): Promise<string> {
     return messages
       .map(message => 
@@ -99,6 +135,11 @@ export class EmailStorage {
       .join('\r\n');
   }
 
+  /**
+   * Imports a message from EML content.
+   * @param emlContent The EML content.
+   * @returns A partial StoredMessage object.
+   */
   static async importFromEML(emlContent: string): Promise<Partial<StoredMessage>> {
     const lines = emlContent.split(/\r?\n/);
     const headers: Record<string, string> = {};
@@ -114,7 +155,7 @@ export class EmailStorage {
       if (!isBody) {
         const match = line.match(/^([\w-]+):\s*(.*)$/);
         if (match) {
-          headers[match[1].toLowerCase()] = match[2];
+          headers[match[1].toLowerCase()] = match[2]];
         }
       } else {
         bodyLines.push(line);
@@ -130,6 +171,10 @@ export class EmailStorage {
     };
   }
 
+  /**
+   * Gets storage information.
+   * @returns An object containing storage information.
+   */
   static getStorageInfo(): {
     used: number;
     total: number;
@@ -145,6 +190,10 @@ export class EmailStorage {
     };
   }
 
+  /**
+   * Gets the metadata from local storage.
+   * @returns The metadata object.
+   */
   private static getMetadata(): {
     messages: Array<{
       id: string;
@@ -157,6 +206,9 @@ export class EmailStorage {
     return stored ? JSON.parse(stored) : { messages: [] };
   }
 
+  /**
+   * Cleans up orphaned chunks in local storage.
+   */
   static async cleanup(): Promise<void> {
     const metadata = this.getMetadata();
     const prefix = new RegExp(`^${STORAGE_PREFIX}`);

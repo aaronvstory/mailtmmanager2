@@ -46,7 +46,18 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
-  useTheme();
+  const { theme } = useTheme(); // Get theme from useTheme hook
+
+  React.useEffect(() => {
+    // Apply theme class on initial load
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+  }, [theme]);
+
   const [token] = useAtom(authTokenAtom);
 
   React.useEffect(() => {

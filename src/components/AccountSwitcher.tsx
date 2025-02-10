@@ -13,23 +13,30 @@ import {
 } from "./ui/dropdown-menu";
 import { activeAccountAtom, storedAccountsAtom } from "../lib/store";
 import { mailTM } from "../lib/api";
+import { Trash2, Loader } from "lucide-react";
 
 export function AccountSwitcher() {
   const [activeAccountId, setActiveAccountId] = useAtom(activeAccountAtom);
   const [storedAccounts, setStoredAccounts] = useAtom(storedAccountsAtom);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const activeAccount = React.useMemo(() => {
     return storedAccounts.find((account) => account.id === activeAccountId);
   }, [storedAccounts, activeAccountId]);
 
-  const handleAccountChange = (accountId: string) => {
-    setActiveAccountId(accountId);
-    const account = storedAccounts.find((account) => account.id === accountId);
-    if (account) {
-      mailTM.setToken(account.token);
-      toast.success(`Switched to account: ${account.address}`);
-    } else {
-      toast.error("Account not found");
+  const handleAccountChange = async (accountId: string) => {
+    setIsLoading(true);
+    try {
+      setActiveAccountId(accountId);
+      const account = storedAccounts.find((account) => account.id === accountId);
+      if (account) {
+        mailTM.setToken(account.token);
+        toast.success(`Switched to account: ${account.address}`);
+      } else {
+        toast.error("Account not found");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -56,16 +63,16 @@ export function AccountSwitcher() {
         <DropdownMenuLabel>Accounts</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {storedAccounts.map((account) => (
-          <DropdownMenuItem key={account.id} onSelect={() => handleAccountChange(account.id)} className="focus:bg-accent">
+          <DropdownMenuItem key={account.id} onSelect={() => handleAccountChange(account.id)} className="focus:bg-accent" disabled={isLoading}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium">{account.address}</p>
+                <p className="text-sm font-medium text-primary">{account.address}</p>
               </div>
               <Button variant="ghost" size="icon" onClick={(e) => {
                 e.stopPropagation();
                 handleAccountDelete(account.id);
-              }}>
-                <Trash2 className="h-4 w-4" />
+              }} disabled={isLoading}>
+                {isLoading ? <Loader className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
               </Button>
             </div>
           </DropdownMenuItem>
@@ -74,5 +81,3 @@ export function AccountSwitcher() {
     </DropdownMenu>
   );
 }
-
-import { Trash2 } from "lucide-react";
