@@ -54,7 +54,7 @@ export const categoriesAtom = atomWithStorage<Category[]>('categories', [
 ]);
 
 export const pinnedAddressesAtom = atomWithStorage<string[]>('pinnedAddresses', []);
-export const storedMessagesAtom = atomWithStorage<StoredMessage[]>('storedMessages', []);
+export const storedMessagesAtom = atomWithStorage<StoredMessage[]>('storedMessages', [] as StoredMessage[]);
 export const emailFiltersAtom = atomWithStorage<EmailFilter[]>('emailFilters', []);
 
 // Auth State

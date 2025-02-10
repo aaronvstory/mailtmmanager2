@@ -6,7 +6,6 @@ import { Mail, Lock, Loader } from 'lucide-react';
 import { toast } from 'sonner';
 import { mailTM } from '../lib/api';
 import { authTokenAtom, currentUserAtom } from '../lib/store';
-import { cn } from '../lib/utils';
 
 export function Register() {
   const navigate = useNavigate();
@@ -27,7 +26,7 @@ export function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
       return;
@@ -44,7 +43,7 @@ export function Register() {
       // Automatically use the first available domain
       const domain = domains[0].domain;
       const email = `${formData.username}@${domain}`;
-      
+
       await mailTM.createAccount(email, formData.password);
       const token = await mailTM.login(email, formData.password);
       setToken(token);
@@ -52,22 +51,23 @@ export function Register() {
       setCurrentUser(user);
       toast.success('Account created successfully!');
       navigate('/');
-    } catch (error: any) {
-      let message = 'Failed to create account';
-      if (error.response?.data?.['hydra:description']) {
-        message = error.response.data['hydra:description'];
-      }
-      toast.error(message);
-    } finally {
-      setIsLoading(false);
-    }
+    } catch (error: unknown) { // eslint-disable-line @typescript-eslint/no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let message = 'Failed to create account';
+          if ((error as any).response?.data?.['hydra:description']) {
+            message = (error as any).response?.data['hydra:description'] ?? message;
+          }
+          toast.error(message);
+        } finally {
+          setIsLoading(false);
+        }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-primary py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-primary">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-[var(--text-primary)]">
             Create a new account
           </h2>
           <p className="mt-2 text-center text-sm text-secondary">
@@ -97,7 +97,7 @@ export function Register() {
                   required
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="appearance-none rounded-t-md relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-secondary text-primary focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-t-md relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-[var(--placeholder-color)] text-[var(--text-primary)] focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Username"
                 />
                 {domains?.length > 0 && (
@@ -123,7 +123,7 @@ export function Register() {
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="appearance-none relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-secondary text-primary focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
+                  className="appearance-none relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-[var(--placeholder-color)] text-primary focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Password"
                 />
               </div>
@@ -144,7 +144,7 @@ export function Register() {
                   required
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  className="appearance-none rounded-b-md relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-secondary text-primary focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-b-md relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-[var(--placeholder-color)] text-primary focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Confirm Password"
                 />
               </div>

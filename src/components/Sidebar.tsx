@@ -28,7 +28,7 @@ export function Sidebar() {
           to="/"
           className={cn(
             'flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium',
-            location.pathname === '/' ? 'bg-gray-100 text-primary' : 'text-secondary hover:bg-hover'
+            location.pathname === '/' ? 'bg-hover text-primary' : 'text-secondary hover:bg-hover'
           )}
         >
           <Inbox className="w-5 h-5 text-secondary" />

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { format } from "date-fns";
-import { Loader, Mail as MailIcon, Star, Trash2 } from "lucide-react";
+import { Loader, Mail as MailIcon, Star, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { mailTM } from "../lib/api";
 import {
@@ -17,13 +17,20 @@ export function Inbox() {
   const [categories] = useAtom(categoriesAtom);
   const [pinnedAddresses, setPinnedAddresses] = useAtom(pinnedAddressesAtom);
   const [isMessagesLoading, setIsMessagesLoading] = useState(false); // Loading state
+  const [filterKeyword, setFilterKeyword] = useState(""); // Filter keyword state
 
-  const { data, error } = useQuery({
-    queryKey: ["messages"],
+  const { data, error, refetch } = useQuery({
+    queryKey: ["messages", filterKeyword], // Include filterKeyword in the query key
     queryFn: async () => {
       setIsMessagesLoading(true); // Set loading to true before fetching
       try {
-        return await mailTM.getMessages();
+        if (filterKeyword) {
+          const filteredMessages = await mailTM.filterMessages(filterKeyword);
+          return { messages: filteredMessages, total: filteredMessages.length }; // Adjust the return to match the expected structure
+        } else {
+          const allMessages = await mailTM.getMessages();
+          return allMessages;
+        }
       } finally {
         setIsMessagesLoading(false); // Set loading to false after fetch (success or error)
       }
@@ -59,17 +66,39 @@ export function Inbox() {
     }
   };
 
+  // Handler for filter input change
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterKeyword(e.target.value);
+    refetch(); // Trigger refetch when the filter keyword changes
+  };
+
   if (error) {
     return (
-      <div className="flex items-center justify-center h-full text-red-500">
-        <p className="text-red-500">Failed to load messages</p>
+      <div className="flex items-center justify-center h-full text-error">
+        <p className="text-error">Failed to load messages</p>
       </div>
     );
   }
 
   return (
     <div className="flex h-full">
-      <div className="w-1/3 border-r border-gray-200 overflow-y-auto">
+      <div className="w-1/3 border-r border-border overflow-y-auto">
+        {/* Filter Input */}
+        <div className="p-4">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <Search className="w-5 h-5 text-gray-400" />
+            </div>
+            <input
+              type="search"
+              placeholder="Filter messages..."
+              className="block w-full p-2 pl-10 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              value={filterKeyword}
+              onChange={handleFilterChange}
+            />
+          </div>
+        </div>
+
         {isMessagesLoading ? ( // Use isMessagesLoading state
           <div className="flex items-center justify-center h-32">
             <Loader className="w-6 h-6 animate-spin text-gray-500" />
@@ -88,20 +117,14 @@ export function Inbox() {
               );
 
               return (
-                <button
+                <div
                   key={message.id}
                   className={cn(
-                    "p-4 cursor-pointer hover:bg-gray-50",
+                    "p-4 cursor-pointer hover:bg-gray-50 w-full text-left",
                     selectedId === message.id && "bg-gray-100"
                   )}
                   onClick={() => setSelectedId(message.id)}
                 >
-                    <div
-                      className={cn(
-                        "p-4 cursor-pointer hover:bg-gray-50 w-full text-left",
-                        selectedId === message.id && "bg-gray-100"
-                      )}
-                    >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center space-x-3">
                         <MailIcon
@@ -166,13 +189,12 @@ export function Inbox() {
                       </div>
                     )}
                   </div>
-                </button>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
       </div>
-      <div className="flex-1 p-6 overflow-y-auto">
+      <div className="w-2/3 p-6 overflow-y-auto">
         {selectedMessage ? (
           <div>
             <div className="flex items-center justify-between mb-6">
@@ -214,9 +236,9 @@ export function Inbox() {
                   {format(new Date(selectedMessage.createdAt), "PPpp")}
                 </span>
               </p>
-            </div>
-            <div className="prose max-w-none">
-              <p>{selectedMessage.intro}</p>
+              <div className="prose max-w-none">
+                <p>{selectedMessage.intro}</p>
+              </div>
             </div>
           </div>
         ) : (

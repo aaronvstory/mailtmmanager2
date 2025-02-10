@@ -43,15 +43,36 @@ export function Login() {
       const existingAccountIndex = storedAccounts.findIndex(
         (account) => account.id === user.id
       );
+
       if (existingAccountIndex >= 0) {
-        // Update existing account
         const updatedAccounts = [...storedAccounts];
         updatedAccounts[existingAccountIndex] = newAccount;
         setStoredAccounts(updatedAccounts);
       } else {
-        // Add new account
         setStoredAccounts([...storedAccounts, newAccount]);
       }
+
+      // Set current session
+      setToken(token);
+      setCurrentUser(user);
+      setActiveAccount(user.id);
+
+      toast.success("Successfully logged in!");
+      navigate("/");
+
+      // Update stored accounts
+      const existingAccountIndex2 = storedAccounts.findIndex(
+        (account) => account.id === user.id
+      );
+      if (existingAccountIndex2 >= 0) {
+              // Update existing account
+              const updatedAccounts = [...storedAccounts];
+              updatedAccounts[existingAccountIndex2] = newAccount;
+              setStoredAccounts(updatedAccounts);
+            } else {
+              // Add new account
+              setStoredAccounts([...storedAccounts, newAccount]);
+            }
 
       // Set active account and auth state
       setActiveAccount(user.id);
@@ -72,7 +93,7 @@ export function Login() {
     <div className="min-h-screen flex items-center justify-center bg-primary py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-primary">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-[var(--text-primary)]">
             Sign in to your account
           </h2>
           <p className="mt-2 text-center text-sm text-secondary">
@@ -105,7 +126,7 @@ export function Login() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-border placeholder-secondary text-primary rounded-t-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-[var(--placeholder-color)] text-[var(--text-primary)] rounded-t-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Email address"
                 />
               </div>
@@ -128,7 +149,7 @@ export function Login() {
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-border placeholder-secondary text-primary rounded-b-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-[var(--placeholder-color)] text-[var(--text-primary)] rounded-b-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Password"
                 />
               </div>
