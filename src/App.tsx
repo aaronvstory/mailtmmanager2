@@ -1,15 +1,18 @@
-
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
-import { Layout } from './components/Layout';
-import { Login } from './pages/Login';
-import { Register } from './pages/Register';
-import { Inbox } from './pages/Inbox';
-import { authTokenAtom, activeAccountAtom, storedAccountsAtom } from './lib/store';
-import { mailTM } from './lib/api';
-import { useTheme } from './lib/theme';
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useAtom } from "jotai";
+import { Layout } from "./components/Layout";
+import { Login } from "./pages/Login";
+import { Register } from "./pages/Register";
+import { Inbox } from "./pages/Inbox";
+import {
+  authTokenAtom,
+  activeAccountAtom,
+  storedAccountsAtom,
+} from "./lib/store";
+import { mailTM } from "./lib/api";
+import { useTheme } from "./lib/theme";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,7 +28,9 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   const [activeAccountId] = useAtom(activeAccountAtom);
   const [storedAccounts] = useAtom(storedAccountsAtom);
 
-  const activeAccount = storedAccounts.find(account => account.id === activeAccountId);
+  const activeAccount = storedAccounts.find(
+    (account) => account.id === activeAccountId
+  );
 
   React.useEffect(() => {
     if (activeAccount) {
@@ -43,7 +48,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 function App() {
   useTheme();
   const [token] = useAtom(authTokenAtom);
-  
+
   React.useEffect(() => {
     if (token) {
       mailTM.setToken(token);
@@ -56,11 +61,14 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={
-            <PrivateRoute>
-              <Layout />
-            </PrivateRoute>
-          }>
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Layout />
+              </PrivateRoute>
+            }
+          >
             <Route index element={<Inbox />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

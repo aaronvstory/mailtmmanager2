@@ -61,18 +61,18 @@ export function Login() {
       navigate("/");
 
       // Update stored accounts
-      const existingAccountIndex = storedAccounts.findIndex(
+      const existingAccountIndex2 = storedAccounts.findIndex(
         (account) => account.id === user.id
       );
-      if (existingAccountIndex >= 0) {
-        // Update existing account
-        const updatedAccounts = [...storedAccounts];
-        updatedAccounts[existingAccountIndex] = newAccount;
-        setStoredAccounts(updatedAccounts);
-      } else {
-        // Add new account
-        setStoredAccounts([...storedAccounts, newAccount]);
-      }
+      if (existingAccountIndex2 >= 0) {
+              // Update existing account
+              const updatedAccounts = [...storedAccounts];
+              updatedAccounts[existingAccountIndex2] = newAccount;
+              setStoredAccounts(updatedAccounts);
+            } else {
+              // Add new account
+              setStoredAccounts([...storedAccounts, newAccount]);
+            }
 
       // Set active account and auth state
       setActiveAccount(user.id);
@@ -126,7 +126,7 @@ export function Login() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-[var(--text-secondary)] text-[var(--text-primary)] rounded-t-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-[var(--placeholder-color)] text-[var(--text-primary)] rounded-t-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Email address"
                 />
               </div>
@@ -149,7 +149,7 @@ export function Login() {
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-[var(--text-secondary)] text-[var(--text-primary)] rounded-b-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 bg-secondary border border-border placeholder-[var(--placeholder-color)] text-[var(--text-primary)] rounded-b-md focus:outline-none focus:ring-accent-primary focus:border-accent-primary focus:z-10 sm:text-sm"
                   placeholder="Password"
                 />
               </div>
